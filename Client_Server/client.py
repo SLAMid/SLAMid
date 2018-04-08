@@ -26,23 +26,36 @@ try:
     size = len(bytes)
 
     # send image size to server
-    sock.sendall("SIZE %s" % size)
-    answer = sock.recv(4096)
+    # sock.sendall("SIZE %s" % size)
+    #sock.send(size.encode())
+    sock.sendall(bytes)
+    print("Sent image")
+
+    with open("tmp_client.png", 'wb') as f:
+        while True:
+            data = sock.recv(1024)
+            if data:
+                print("Receiving data...")
+                f.write(data)
+            else:
+                break
+    f.close()
+    print("Received image")
 
     #print 'answer = %s' % answer
 
     # send image to server
-    if answer == 'GOT SIZE':
-        sock.sendall(bytes)
-        new_image = sock.recv(4*size)
+    # if answer == 'GOT SIZE':
+    #     sock.sendall(bytes)
+    #     new_image = sock.recv(4*size)
 
-        new_file = open("new_image.png", 'wb')
-        new_file.write(new_image)
+    #     new_file = open("new_image.png", 'wb')
+    #     new_file.write(new_image)
 
-        #im = cv2.imread("new_image.png",0)
-        #cv2.imshow("grey", im)
+    #     #im = cv2.imread("new_image.png",0)
+    #     #cv2.imshow("grey", im)
 
-    myfile.close()
+    # myfile.close()
 
 finally:
     sock.close()

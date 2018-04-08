@@ -32,48 +32,45 @@ while True:
 
             sockfd, client_address = server_socket.accept()
             connected_clients_sockets.append(sockfd)
+            print("Connected with client {}".format(client_address))
 
         else:
             try:
-
-                data = sock.recv(4096)
-                txt = str(data)
-
-                if data:
-
-                    if data.startswith('SIZE'):
-                        tmp = txt.split()
-                        size = int(tmp[1])
-                        sock.sendall("GOT SIZE")
-
-                    elif data.startswith('BYE'):
-                        sock.shutdown()
-
-                    else :
-
-                        myfile = open("temp.png", 'wb')
-                        myfile.write(data)
-
-                        data = sock.recv(size-4096)
-                        if not data:
-                            myfile.close()
+                with open("tmp_server.png", 'wb') as f:
+                    while True:
+                        data = sock.recv(1024)
+                        if data:
+                            print("Receiving data...")
+                            f.write(data)
+                        else:
                             break
-                        myfile.write(data)
-                        myfile.close()
+                f.close()
+                print("Received image")
 
-                        #IMAGE MANIPULATION BEGINS HERE
-                        imm = cv2.imread("temp.png")
-                        imm = cv2.cvtColor(imm, cv2.COLOR_BGR2GRAY)
-                        cv2.imwrite("temp_gray.png",imm)
-                        #AND ENDS HERE
+                #IMAGE MANIPULATION BEGINS HERE
+                # print("Manipulating image")
+                # imm = cv2.imread("temp_server.png")
+                # imm = cv2.cvtColor(imm, cv2.COLOR_BGR2GRAY)
+                # cv2.imwrite("temp_gray.png",imm)
+                #AND ENDS HERE
+                # print("Finished manipulating image")
+                # myfile_gray = open("temp_gray.png", 'rb')
+                # print("Sending image")
+                # bytes = myfile_gray.read()
+                # sock.sendall(bytes)
+                # print("Finished sending image")
+                # print("Closing socket")
 
-                        myfile_gray = open("temp_gray.png", 'rb')
-                        bytes = myfile_gray.read()
+                print("Sending file back")
+                file_r = open("tmp_server.png", "rb")
+                bytes = file_r.read()
+                sock.sendall(bytes)
+                sock.shutdown()
 
-                        sock.sendall(bytes)
-                        sock.shutdown()
             except:
+                print("No data received, closing socket")
                 sock.close()
                 connected_clients_sockets.remove(sock)
+                print("Disconnected with client {}".format(client_address))
                 continue
 server_socket.close()
