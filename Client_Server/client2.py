@@ -5,6 +5,7 @@ import socket, select
 from time import gmtime, strftime
 from random import randint
 import sys
+import time
 
 image = sys.argv[1]
 
@@ -21,14 +22,24 @@ try:
     myfile = open(image, 'rb')
     bytes = myfile.read()
 
-    sock.sendall(bytes)
-    new_image = sock.recv(10000)
-    new_file = open("new_image.png", 'wb')
-    new_file.write(new_image)
+    size = len(bytes)
+    print(size)
+
+    sock.sendall(str(size).encode())
+
+    answer = (sock.recv(4096)).decode()
+    print(answer)
+
+    if answer is "1":
+        print("Received 1")
+        sock.sendall(bytes)
+        new_file = open("new_image.png", 'wb')
+
+        new_image = sock.recv(4*size)
+        new_file.write(new_image)
 
     #im = cv2.imread("new_image.png",0)
     #cv2.imshow("grey", im)
-
     myfile.close()
     new_file.close()
 
