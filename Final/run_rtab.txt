@@ -1,0 +1,50 @@
+RGB SLAM
+--------
+1) Open a terminal
+2) Enter "roscore"
+3) Open another terminal
+4) Enter "roslaunch rtabmap_ros rgbd_mapping_kinect2.launch"
+5) Open another terminal
+6) Enter "source ~/catkin_ws/devel/setup.bash"
+7) Enter "rosrun kinect2_bridge kinect2_bridge _depth_method:=opengl _reg_method:=cpu _publish_tf:=true"
+
+MONO SLAM
+---------
+1) Open a terminal
+2) Enter "roscore"
+3) Open another terminal
+4) Enter "rosrun tf static_transform_publisher 0 0 0 -1.5707963267948966 0 -1.5707963267948966 camera_link kinect2_link 100"
+5) Open another terminal
+6) Enter "roslaunch rtabmap_ros rtabmap.launch rtabmap_args:="--delete_db_on_start" rgb_topic:=/kinect2/qhd/image_mono_rect depth_topic:=/kinect2/qhd/image_depth_rect camera_info_topic:=/kinect2/qhd/camera_info"
+7) Open another terminal
+8) Enter "rosrun kinect2_bridge kinect2_bridge _depth_method:=opengl _reg_method:=cpu _publish_tf:=true"
+
+
+Final
+------
+1) roscore
+2) rosrun tf static_transform_publisher 0 0 0 -1.5707963267948966 0 -1.5707963267948966 camera_link kinect2_link 100
+2.5) source ~/catkin_ws/devel/setup.bash
+3) rosrun kinect2_bridge kinect2_bridge _depth_method:=opengl _reg_method:=cpu _publish_tf:=true
+3.5) source ~/tfpy2/bin/activate
+3.7) source ~/catkin_ws/devel/setup.bash
+4) rosrun mask_rcnn_ros mask_rcnn_node
+4.5) source /opt/ros/kinetic/setup.bash
+5) ROS_NAMESPACE=/kinect2/seg rosrun image_proc image_proc
+5.5) source ~/catkin_ws/devel/setup.bash
+6) roslaunch rtabmap_ros rtabmap.launch rtabmap_args:="--delete_db_on_start" rgb_topic:=/kinect2/seg/image_raw depth_topic:=/kinect2/qhd/image_depth_rect camera_info_topic:=/kinect2/seg/camera_info wait_for_transform:=0.5
+
+//just for image
+cd catkin_ws
+catkin_make
+//ros run in other term
+rviz
+
+for the gui in term open up to this location
+1) cd /home/dan/catkin_ws/src/mask_rcnn_ros/nodes
+2) http-server --cors
+3) go to broswer open script.html
+
+
+
+source /opt/ros/kinetic/setup.bash
