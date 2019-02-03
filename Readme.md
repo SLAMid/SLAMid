@@ -17,3 +17,8 @@
 
 - ROS (Robotic Operating System)
 - Python 2.7
+- Nodejs for UI
+
+
+## Video Summary
+https://www.youtube.com/watch?v=-ZQip5AynBY
